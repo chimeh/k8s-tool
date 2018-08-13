@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: echomap
+  namespace: helloworld
+spec:
+  rules:
+  - host: app.k8s.local
+    http:
+      paths:
+      - path: /api/echo/v1
+        backend:
+          serviceName: echo-v1
+          servicePort: 80
+  - host: app.k8s.local
+    http:
+      paths:
+      - path: /api/echo/v2
+        backend:
+          serviceName: echo-v2
+          servicePort: 80
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongIngress
+metadata:
+  name: echomap
+  namespace: helloworld
+proxy:
+  path: /
+route:
+  strip_path: true
