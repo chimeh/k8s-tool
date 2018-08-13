@@ -1,63 +1,51 @@
 #!/usr/bin/env python
-# Foundations of Python Network Programming - Chapter 1 - search3.py
 
 import  sys
 import  os
 import httplib
 import  urllib
 import urllib2
-import re
-import cookielib
-import  poster
 import  json
-import kong
-import kubernetes
-try:
-    import json
-except ImportError:  # for Python 2.5
-    import simplejson as json
-
-path = ('/api/v1/services')
-inner_domain = "cluster.local"
-outer_domain = "http://app.k8s.local"
-kong_api = "http://10.99.11.1:31000"
+from kubernetes import client, config
+from kong.exceptions import ConflictError
+from kong.simulator import KongAdminSimulator
+from kong.client import KongAdminClient
+from kong.compat import TestCase, skipIf, run_unittests, OrderedDict, urlencode, HTTPConnection
+from kong.utils import uuid_or_string, add_url_params, sorted_ordered_dict
+print(sys.path)
 
 
-kong = kong.client("http://10.99.11.1:31000")
 
-connection = httplib.HTTPConnection('10.99.10.1:8080')
-connection.request('GET', path)
-rawreply = connection.getresponse().read()
-reply = json.loads(rawreply)
-#print reply["items"][0]
 
-for i, val in enumerate(reply["items"]):
-    print "########################\n" + str(i)
-#    print json.dumps(val[i], indent=2)
-# service 
-#    print json.dumps(val, indent=2)
-    print val["metadata"]["name"]
-    print val["metadata"]["namespace"]
-    print val["spec"]["ports"][0]["port"]
-    ns = val["metadata"]["name"]
-    svc = val["metadata"]["namespace"]
-    port = val["spec"]["ports"][0]["port"]
-    #always assume http
-    protocol = "http" 
-    inner_fullname = []
-    inner_fullname.append(protocol)
-    inner_fullname.append("://")
-    inner_fullname.append(svc)
-    inner_fullname.append(ns)
-    inner_fullname.append(inner_domain)
 
-#    inner_upstream = protocol + "://" + svc + ns + "svc" + inner_domain +":" + str(port)
-    outer_fullname =  outer_domain + "/" + ns + svc
+outer_url="http://app.k8s.local"
+
+
+def main():
+    kong = KongAdminClient(api_url="http://10.99.11.1:31000")
+    # Configs can be set in Configuration class directly or using helper
+    # utility. If no argument provided, the config will be loaded from
+    # default location.
+    config.load_kube_config()
+    inner_upstreams = {}
+    v1 = client.CoreV1Api()
+    print("Listing all svc :")
+    ret = v1.list_service_for_all_namespaces(watch=False)
+    for i in ret.items:
+#        print("%s\t%s\t%d" %
+#              (i.metadata.namespace, i.metadata.name, i.spec.ports[0].port))
+        inner_svc_upstream="%s%s.%s.%s:%d" % ("http://", i.metadata.name, i.metadata.namespace, "svc.cluster.local", i.spec.ports[0].port)
+#        print inner_url
+        outer_uri="/%s/%s" % ( i.metadata.namespace, i.metadata.name)
+        outer_fullurl="%s/%s/%s/" % ( outer_url, i.metadata.namespace, i.metadata.name)
+        inner_upstreams[inner_svc_upstream] =  "%s/%s/%s" % (outer_url, i.metadata.namespace, i.metadata.name);
+        route_name="auto-%s-%s" % (i.metadata.namespace, i.metadata.name)
+        kong.apis.delete(route_name)
+        kong.apis.create_or_update(inner_svc_upstream,
+                        name=route_name,
+                        uris=outer_uri,
+                        strip_uri=True)
+        print("%s\t%s\t%s" % (outer_fullurl, inner_svc_upstream, outer_uri))
     
-
-#    print json.dumps(val["spec"]["ports"], indent=2)
-#    print json.dumps(reply["items"][i]["spec"], indent=2)
-    
-pretty_reply=json.dumps(reply,indent=2)
-#print(pretty_reply)
-#print(pretty_reply)
+if __name__ == '__main__':
+    main()

@@ -269,13 +269,13 @@ class APIAdminClient(APIAdminContract, RestClient):
         amount = result.get('total', len(result.get('data')))
         return amount
 
-    def create(self, upstream_url, name=None, request_host=None, request_path=None, strip_request_path=False,
+    def create(self, upstream_url, name=None, hosts=None, uris=None, strip_uri=False,
                preserve_host=False):
         response = self.session.post(self.get_url('apis'), data={
             'name': name,
-            'request_host': request_host or None,  # Empty strings are not allowed
-            'request_path': request_path or None,  # Empty strings are not allowed
-            'strip_request_path': strip_request_path,
+            'hosts': hosts or None,  # Empty strings are not allowed
+            'uris': uris or None,  # Empty strings are not allowed
+            'strip_uri': strip_uri,
             'preserve_host': preserve_host,
             'upstream_url': upstream_url
         }, headers=self.get_headers())
@@ -289,13 +289,13 @@ class APIAdminClient(APIAdminContract, RestClient):
 
         return response.json()
 
-    def create_or_update(self, upstream_url, api_id=None, name=None, request_host=None, request_path=None,
-                         strip_request_path=False, preserve_host=False):
+    def create_or_update(self, upstream_url, api_id=None, name=None, hosts=None, uris=None,
+                         strip_uri=False, preserve_host=False):
         data = {
             'name': name,
-            'request_host': request_host or None,  # Empty strings are not allowed
-            'request_path': request_path or None,  # Empty strings are not allowed
-            'strip_request_path': strip_request_path,
+            'hosts': hosts or None,  # Empty strings are not allowed
+            'uris': uris or None,  # Empty strings are not allowed
+            'strip_uri': strip_uri,
             'preserve_host': preserve_host,
             'upstream_url': upstream_url
         }
@@ -316,7 +316,7 @@ class APIAdminClient(APIAdminContract, RestClient):
 
     def update(self, name_or_id, upstream_url, **fields):
         assert_dict_keys_in(
-            fields, ['name', 'request_host', 'request_path', 'strip_request_path', 'preserve_host'],
+            fields, ['name', 'hosts', 'uris', 'strip_uri', 'preserve_host'],
             INVALID_FIELD_ERROR_TEMPLATE)
 
         # Explicitly encode on beforehand before passing to requests!
@@ -353,7 +353,7 @@ class APIAdminClient(APIAdminContract, RestClient):
 
     @backoff.on_exception(backoff.expo, ServerError, max_tries=3)
     def list(self, size=100, offset=None, **filter_fields):
-        assert_dict_keys_in(filter_fields, ['id', 'name', 'request_host', 'request_path'], INVALID_FIELD_ERROR_TEMPLATE)
+        assert_dict_keys_in(filter_fields, ['id', 'name', 'hosts', 'uris'], INVALID_FIELD_ERROR_TEMPLATE)
 
         query_params = filter_fields
         query_params['size'] = size
