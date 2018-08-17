@@ -38,7 +38,7 @@ spec:
           - name: DB_ADAPTER
             value: postgres
           - name: DB_URI
-            value: postgresql://konga_ui_internal:konga_ui_internal@ext-postgres.infra-data.svc.cluster.local:5432/konga_ui_internal
+            value: postgresql://kong_internal:kong_internal@ext-postgres.infra-data.svc.cluster.local:5432/kong_internal_uidb
           - name: NODE_ENV
             value: production
           ports:

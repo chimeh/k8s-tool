@@ -106,7 +106,7 @@ spec:
           - name: KONG_PG_HOST
             value: ext-postgres.infra-data.svc.cluster.local
           - name: KONG_PG_DATABASE
-            value: kong_internal
+            value: kong_internal_db
           - name: KONG_PROXY_ACCESS_LOG
             value: "/dev/stdout"
           - name: KONG_ADMIN_ACCESS_LOG

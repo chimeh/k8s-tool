@@ -21,6 +21,6 @@ spec:
           - name: KONG_PG_HOST
             value: ext-postgres.infra-data.svc.cluster.local
           - name: KONG_PG_DATABASE
-            value: kong_internal
+            value: kong_internal_db
         command: [ "/bin/sh", "-c", "kong migrations up" ]
       restartPolicy: Never
