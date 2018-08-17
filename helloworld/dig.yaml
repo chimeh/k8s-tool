@@ -1,20 +1,20 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: busybox
+  name: dnstool
   namespace: helloworld
   labels:
-    k8s-app: busybox
+    k8s-app: dnstool
     kubernetes.io/cluster-service: "true"
     addonmanager.kubernetes.io/mode: Reconcile
 spec:
   selector:
     matchLabels:
-      k8s-app: busybox
+      k8s-app: dnstool
   template:
     metadata:
       labels:
-        k8s-app: busybox
+        k8s-app: dnstool
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
