@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: busybox
+  namespace: helloworld
+  labels:
+    k8s-app: busybox
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
+spec:
+  selector:
+    matchLabels:
+      k8s-app: busybox
+  template:
+    metadata:
+      labels:
+        k8s-app: busybox
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+    spec:
+      containers:
+      - name: curl
+        image: cfmanteiga/alpine-bash-curl-jq
+        imagePullPolicy: IfNotPresent
+        command:
+          - sleep
+          - "3600"
+      - name: dns
+        image: azukiapp/dig
+        imagePullPolicy: IfNotPresent
+        command:
+          - sleep
+          - "3600"
+

@@ -41,4 +41,15 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
-
+          - name: ENV_FROM_CONFIGMAP
+            valueFrom:
+              configMapKeyRef:
+                name: app-rc1-dbconf
+                key: database.properties
+        volumeMounts:
+        - name: volume-from-configmap
+          mountPath: /app/config
+      volumes:
+        - name: volume-from-configmap
+          configMap:
+            name: app-rc1-dbconf

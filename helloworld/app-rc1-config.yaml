@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-rc1-dbconf
+  namespace: helloworld
+data:
+  database.properties: |
+    endpoint=k8s.us-east-1.rds.amazonaws.com
+    port=1521
+    kkkk=vvvv
+  app.properties: |
+    name=DevOps-with-Kubernetes
+    port=4420
+    keykey=valuevalue
