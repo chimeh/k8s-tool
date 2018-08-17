@@ -10,7 +10,7 @@ spec:
     targetPort: 5432
     protocol: TCP
   selector:
-    app: postgres
+    app: postgres-client
 
 ---
 apiVersion: v1
@@ -23,7 +23,7 @@ spec:
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres-client
     spec:
       containers:
         - name: postgres-client
