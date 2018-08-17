@@ -15,8 +15,8 @@ spec:
           - name: KONG_NGINX_DAEMON
             value: 'off'
           - name: KONG_PG_PASSWORD
-            value: kong
+            value: Kongpass123
           - name: KONG_PG_HOST
-            value: postgres.infra-data.svc.cluster.local
+            value: ext-postgres.infra-data.svc.cluster.local
         command: [ "/bin/sh", "-c", "kong migrations up" ]
       restartPolicy: Never
