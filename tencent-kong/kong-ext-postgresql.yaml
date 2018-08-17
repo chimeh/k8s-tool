@@ -1,0 +1,22 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: postgres
+  namespace: infra-data
+subsets:
+  - addresses:
+      - ip: 172.25.3.12
+    ports:
+      - port: 5432
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgres
+  namespace: infra-data
+spec:
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
