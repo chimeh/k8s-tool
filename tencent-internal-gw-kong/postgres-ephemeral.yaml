@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: volatie-postgres
+  namespace: infra-data
+spec:
+  ports:
+  - name: volatie-postgres
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+  selector:
+    app: volatie-postgres
+
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: volatie-postgres
+  namespace: infra-data
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: volatie-postgres
+    spec:
+      containers:
+        - name: volatie-postgres
+          image: postgres:9.5
+          env:
+            - name: POSTGRES_USER
+              value: kong
+            - name: POSTGRES_PASSWORD
+              value: kong
+            - name: POSTGRES_DB
+              value: kong
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: pg-data
+      volumes:
+        - name: pg-data
+          emptyDir: {}
+

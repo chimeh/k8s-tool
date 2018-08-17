@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: konga-ui-migration
+  namespace: infra-gw-internal
+spec:
+  template:
+    metadata:
+      name: konga-ui-migration
+    spec:
+      containers:
+      - name: konga-ui-migration
+        image: pantsel/konga:0.12.0
+        env:
+          - name: TOKEN_SECRET
+            value: 8900f6678bdf6f06a68a9814d3d5b8c7
+          - name: DB_ADAPTER
+            value: postgres
+          - name: DB_URI
+            value: postgresql://konga_ui_internal:konga_ui_internal@ext-postgres.infra-data.svc.cluster.local:5432/konga_ui_internal
+          - name: NODE_ENV
+            value: production
+        command: [ "/bin/bash", "-c", "/app/start.sh prepare" ]
+      restartPolicy: Never
+
