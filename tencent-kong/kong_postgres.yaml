@@ -101,7 +101,7 @@ spec:
           - name: KONG_PG_PASSWORD
             value: Kongpass123
           - name: KONG_PG_HOST
-            value: postgres.infra-data.svc.cluster.local
+            value: ext-postgres.infra-data.svc.cluster.local
           - name: KONG_PG_DATABASE
             value: kong
           - name: KONG_PROXY_ACCESS_LOG

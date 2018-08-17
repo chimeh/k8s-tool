@@ -1,7 +1,7 @@
 kind: Endpoints
 apiVersion: v1
 metadata:
-  name: postgres
+  name: ext-postgres
   namespace: infra-data
 subsets:
   - addresses:
@@ -12,7 +12,7 @@ subsets:
 kind: Service
 apiVersion: v1
 metadata:
-  name: postgres
+  name: ext-postgres
   namespace: infra-data
 spec:
   ports:
