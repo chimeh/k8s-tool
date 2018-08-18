@@ -20,6 +20,7 @@ spec:
             value: postgresql://kong_internal:kong_internal@ext-postgres.infra-data.svc.cluster.local:5432/kong_internal_uidb
           - name: NODE_ENV
             value: production
-        command: [ "/bin/bash", "-c", "/app/start.sh prepare" ]
+#        command: [ "/bin/bash", "-c", "/app/start.sh prepare" ]
+        command: [ "/bin/bash", "-c", "/app/start.sh -c prepare -a postgres -u postgresql://kong_internal:kong_internal@ext-postgres.infra-data.svc.cluster.local:5432/kong_internal_uidb" ]
       restartPolicy: Never
 
