@@ -48,6 +48,12 @@ metadata:
   name: kubernetes-dashboard-minimal
   namespace: kube-system
 rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: ["extensions", "apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch"]
   # Allow Dashboard to create 'kubernetes-dashboard-key-holder' secret.
 - apiGroups: [""]
   resources: ["secrets"]
@@ -55,7 +61,7 @@ rules:
   # Allow Dashboard to create 'kubernetes-dashboard-settings' config map.
 - apiGroups: [""]
   resources: ["configmaps"]
-  verbs: ["create"]
+  verbs: ["create", "list"]
   # Allow Dashboard to get, update and delete Dashboard exclusive secrets.
 - apiGroups: [""]
   resources: ["secrets"]
@@ -86,6 +92,40 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: kubernetes-dashboard-minimal
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kube-system
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  labels:
+    kubernetes.io/bootstrapping: rbac-default-viewer
+  name: cluster-viewer
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs: ["get", "watch", "list"]
+- nonResourceURLs:
+  - '*'
+  verbs: ["get", "watch", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-viewer
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-viewer
 subjects:
 - kind: ServiceAccount
   name: kubernetes-dashboard
